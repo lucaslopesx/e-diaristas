@@ -3,16 +3,32 @@ import SafeEnvironment from "ui/components/feedback/SafeEnvironment/SafeEnvironm
 import PageTitle from "ui/components/data-display/PageTitle/PageTitle";
 import UserInformation from "ui/components/data-display/UserInformation/UserInformation";
 import TextFieldMask from "ui/components/inputs/TextFieldMask/TextFieldMask";
-import { Button, Typography, Container } from "@mui/material";
+import {
+  Button,
+  Typography,
+  Container,
+  CircularProgress,
+} from "@mui/material";
 import {
   FormELementsContainer,
   ProfessionalsPaper,
   ProfessionalsContainer,
 } from "@styles/pages/index.style";
-import { useState } from "react";
+import useIndex from "data/hooks/pages/useIndex.page";
 
 const Home: NextPage = () => {
-  const [contador, setContador] = useState(5);
+  const {
+    cep,
+    setCep,
+    cepValido,
+    buscarProfissionais,
+    erro,
+    diaristas,
+    searchDone,
+    loading,
+    diaristasRestantes,
+  } = useIndex();
+  FormELementsContainer;
 
   return (
     <div>
@@ -23,8 +39,7 @@ const Home: NextPage = () => {
           "Preencha seu endereço e veja todos os profissionais da sua localidade"
         }
       />
-      Contador: {contador}
-      <button onClick={() => setContador(contador + 1)}>clique aqui</button>
+
       <Container>
         <FormELementsContainer>
           <TextFieldMask
@@ -32,58 +47,65 @@ const Home: NextPage = () => {
             label={"Digite seu CEP"}
             fullWidth
             variant={"outlined"}
+            value={cep}
+            onChange={(event) => setCep(event.target.value)}
           />
 
-          <Typography color={"error"}>CEP Invalido</Typography>
+          {erro && <Typography color={"error"}>{erro}</Typography>}
 
           <Button
             variant={"contained"}
             color={"secondary"}
             sx={{ width: "220px" }}
+            disabled={!cepValido || loading}
+            onClick={() => buscarProfissionais(cep)}
           >
-            Buscar
+            {loading ? <CircularProgress size={20} /> : "Buscar"}
           </Button>
         </FormELementsContainer>
-        <ProfessionalsPaper>
-          <ProfessionalsContainer>
-            <UserInformation
-              name={"Lucas Lopes"}
-              picture={"https://github.com/lucaslopesx.png"}
-              rating={5}
-              description={"Minas Gerais"}
-            />
-            <UserInformation
-              name={"Lucas Lopes"}
-              picture={"https://github.com/lucaslopesx.png"}
-              rating={5}
-              description={"Minas Gerais"}
-            />
-            <UserInformation
-              name={"Lucas Lopes"}
-              picture={"https://github.com/lucaslopesx.png"}
-              rating={5}
-              description={"Minas Gerais"}
-            />
-            <UserInformation
-              name={"Lucas Lopes"}
-              picture={"https://github.com/lucaslopesx.png"}
-              rating={5}
-              description={"Minas Gerais"}
-            />
-            <UserInformation
-              name={"Lucas Lopes"}
-              picture={"https://github.com/lucaslopesx.png"}
-              rating={5}
-              description={"Minas Gerais"}
-            />
-            <UserInformation
-              name={"Lucas Lopes"}
-              picture={"https://github.com/lucaslopesx.png"}
-              rating={5}
-              description={"Minas Gerais"}
-            />
-          </ProfessionalsContainer>
-        </ProfessionalsPaper>
+
+        {searchDone &&
+          (diaristas.length > 0 ? (
+            <ProfessionalsPaper>
+              <ProfessionalsContainer>
+                {diaristas.map((item, index) => {
+                  return (
+                    <UserInformation
+                      key={index}
+                      name={item.nome_completo}
+                      picture={item.foto_usuario}
+                      rating={item.reputacao}
+                      description={item.cidade}
+                    />
+                  );
+                })}
+              </ProfessionalsContainer>
+
+              <Container sx={{ textAlign: "center" }}>
+                {diaristasRestantes > 0 && (
+                  <Typography sx={{ mt: 5 }}>
+                    ...e mais {diaristasRestantes}{" "}
+                    {diaristasRestantes > 1
+                      ? "professionals atendem"
+                      : "profissional atende"}{" "}
+                    ao seu endereço.
+                  </Typography>
+                )}
+
+                <Button
+                  variant={"contained"}
+                  color={"secondary"}
+                  sx={{ mt: 5 }}
+                >
+                  Contratar um profissional
+                </Button>
+              </Container>
+            </ProfessionalsPaper>
+          ) : (
+            <Typography align={"center"} color={"textPrimary"}>
+              Ainda não temos nenhuma diarista disponível em sua região
+            </Typography>
+          ))}
       </Container>
     </div>
   );
