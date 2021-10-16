@@ -1,6 +1,5 @@
 import React from "react";
 import { Text, View } from "react-native";
-import Button from "ui/components/inputs/Button/Button";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "ui/router/Router";
 
