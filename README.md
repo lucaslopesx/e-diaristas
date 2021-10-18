@@ -3,4 +3,4 @@
 
 Desenvolvimento
 de um projeto envolvendo Next Js, React, manipulação de
-APIs, python, django e a portabilidade do projeto para o mobile
+APIs, python, django e a portabilidade do projeto para o mobile no react-native
